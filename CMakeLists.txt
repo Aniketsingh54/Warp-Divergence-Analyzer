@@ -1,32 +1,46 @@
 cmake_minimum_required(VERSION 3.13)
+project(WarpAnalysis)
 
-project(WarpDivergence LANGUAGES CXX)
+# Step 1: Locate llvm-config
+find_program(LLVM_CONFIG_EXECUTABLE NAMES llvm-config-19 llvm-config REQUIRED)
 
-# Set C++ standard
-set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ standard to conform to")
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Step 2: Extract proper include path
+execute_process(COMMAND ${LLVM_CONFIG_EXECUTABLE} --includedir
+  OUTPUT_VARIABLE LLVM_INCLUDE_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-# Find LLVM
-find_package(LLVM REQUIRED CONFIG)
+execute_process(COMMAND ${LLVM_CONFIG_EXECUTABLE} --libdir
+  OUTPUT_VARIABLE LLVM_LIB_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-# Enable LLVM support and include directories
-message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
-message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
+execute_process(COMMAND ${LLVM_CONFIG_EXECUTABLE} --libs
+  OUTPUT_VARIABLE LLVM_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
+separate_arguments(LLVM_LIBS)
 
-# Add LLVM includes and definitions
-include_directories(SYSTEM ${LLVM_INCLUDE_DIRS})
-add_definitions(${LLVM_DEFINITIONS})
+execute_process(COMMAND ${LLVM_CONFIG_EXECUTABLE} --system-libs
+  OUTPUT_VARIABLE LLVM_SYS_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
+separate_arguments(LLVM_SYS_LIBS)
 
-# Define your plugin as a proper pass plugin
-set(LLVM_LINK_COMPONENTS
-  Core
-  Support
-  Analysis
+execute_process(COMMAND ${LLVM_CONFIG_EXECUTABLE} --cxxflags
+  OUTPUT_VARIABLE LLVM_CXX_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+separate_arguments(LLVM_CXX_FLAGS)
+
+# Step 3: Set up build config
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED YES)
+
+include_directories(
+  ${LLVM_INCLUDE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-# Enable plugin support
-include(AddLLVM)
+link_directories(${LLVM_LIB_DIR})
 
-add_llvm_pass_plugin(WarpDivergence
-  lib/WarpDivergence.cpp
+# Step 4: Build LLVM plugin
+add_library(WarpAnalysis MODULE WarpAnalysis.cpp)
+
+target_compile_options(WarpAnalysis PRIVATE ${LLVM_CXX_FLAGS})
+target_link_libraries(WarpAnalysis PRIVATE ${LLVM_LIBS} ${LLVM_SYS_LIBS})
+
+set_target_properties(WarpAnalysis PROPERTIES
+  PREFIX ""
+  SUFFIX ".so"
 )
