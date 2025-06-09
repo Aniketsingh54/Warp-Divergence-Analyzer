@@ -4,6 +4,27 @@ using namespace llvm;
 
 namespace warp {
 
+/**
+ * @brief Emits a JSON representation of kernel analysis data.
+ *
+ * This function generates a JSON object as a string containing various
+ * statistics and metadata about a kernel function, such as branch counts,
+ * memory operations, barrier usage, and source code locations of divergent
+ * branches and memory accesses.
+ *
+ * @param funcName            Name of the kernel function.
+ * @param branchCount         Total number of branches in the function.
+ * @param divergentBranches   Number of divergent branches.
+ * @param threadDepBranches   Number of thread-dependent branches.
+ * @param totalMem            Total number of memory operations.
+ * @param sharedMem           Number of shared memory operations.
+ * @param localMem            Number of local memory operations.
+ * @param globalMem           Number of global memory operations.
+ * @param barriers            Number of barrier instructions.
+ * @param divLocs             Vector of source locations for divergent branches (as strings).
+ * @param memLocs             Vector of source locations for memory accesses (as strings).
+ * @return std::string        JSON-formatted string representing the kernel analysis data.
+ */
 std::string emitKernelJson(const std::string &funcName,
                            int branchCount,
                            int divergentBranches,
@@ -50,6 +71,28 @@ std::string emitKernelJson(const std::string &funcName,
   return s.str();
 }
 
+/**
+ * @brief Emits a JSON array representing groups of source files and their associated kernels.
+ *
+ * This function takes a map where each key is a source file name and the corresponding value
+ * is a vector of kernel names associated with that file. It outputs a JSON array to the
+ * standard output stream, where each element is an object containing the source file name
+ * and an array of its kernels.
+ *
+ * Example output:
+ * [
+ *   {
+ *     "source_file": "file1.cpp",
+ *     "kernels": [
+ *       "kernelA",
+ *       "kernelB"
+ *     ]
+ *   },
+ *   ...
+ * ]
+ *
+ * @param fileKernelMap A map from source file names to vectors of kernel names.
+ */
 void emitFileGroups(const std::map<std::string, std::vector<std::string>> &fileKernelMap) {
   outs() << "[\n";
   bool firstFile = true;

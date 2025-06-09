@@ -3,6 +3,26 @@
 #include "JsonEmitter.h"
 using namespace llvm;
 
+/**
+ * @brief Analyzes a given LLVM function to extract various control flow and memory access metrics.
+ *
+ * This function inspects the provided LLVM Function object and collects statistics relevant to GPU kernel analysis,
+ * such as the number of branches, divergent branches, thread-dependent branches, memory operations (loads/stores),
+ * and barrier instructions. It also tracks the source locations of divergent branches and memory operations.
+ *
+ * The analysis includes:
+ * - Counting conditional branches and select instructions.
+ * - Detecting divergent branches using post-dominator analysis and thread index dependencies.
+ * - Counting memory operations and classifying them by address space (shared, local, global).
+ * - Counting barrier instructions (e.g., "llvm.nvvm.barrier").
+ * - Recording source file and line information for divergent branches and memory operations.
+ *
+ * The results are serialized into a JSON string and stored in the provided fileKernelMap, indexed by source file.
+ *
+ * @param F             The LLVM Function to analyze.
+ * @param FAM           The FunctionAnalysisManager providing required analyses (DominatorTree, PostDominatorTree).
+ * @param fileKernelMap A map from source file names to lists of JSON strings containing kernel analysis results.
+ */
 namespace warp {
 
 void analyzeFunction(Function &F,

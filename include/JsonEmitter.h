@@ -7,6 +7,14 @@
 #include <sstream>
 #include <llvm/Support/raw_ostream.h>
 
+/**
+ * @namespace warp
+ * @brief Contains utilities for emitting JSON representations of kernel analysis and grouping files by kernels.
+ *
+ * The warp namespace provides functions to serialize kernel analysis data into JSON format and to emit
+ * groupings of files associated with specific kernels. These utilities are intended to assist in the
+ * analysis and reporting of kernel characteristics, such as branch divergence and memory usage.
+ */
 namespace warp {
 
 std::string emitKernelJson(const std::string &funcName,

@@ -7,6 +7,13 @@
 #include "llvm/IR/DebugInfoMetadata.h"
 #include <string>
 
+/**
+ * @namespace warp
+ * @brief Utility functions for analyzing LLVM IR in the context of thread index dependencies and source locations.
+ *
+ * This namespace provides helper functions to determine if a value is derived from thread indices,
+ * analyze dependencies on thread indices, and extract or parse source code location information from LLVM instructions.
+ */
 namespace warp {
 
 bool isThreadIdxSource(llvm::Value *V);

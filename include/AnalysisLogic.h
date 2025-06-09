@@ -12,6 +12,13 @@
 #include <vector>
 #include <string>
 
+/**
+ * @namespace warp
+ * @brief Contains analysis logic and data structures for WarpInsight.
+ *
+ * The warp namespace encapsulates functions and types related to the analysis
+ * of LLVM IR functions, specifically for mapping file names to kernel names.
+ */
 namespace warp {
 
 using FileKernelMap = std::map<std::string, std::vector<std::string>>;
