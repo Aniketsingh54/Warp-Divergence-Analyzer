@@ -6,7 +6,9 @@
 #include <string>
 #include <sstream>
 #include <llvm/Support/raw_ostream.h>
-
+#include <fstream>
+#include <sys/stat.h>
+#include <sys/types.h>
 /**
  * @namespace warp
  * @brief Contains utilities for emitting JSON representations of kernel analysis and grouping files by kernels.

@@ -1,0 +1,55 @@
+[
+    {
+      "function": "kernel_if_else",
+      "branch_count": 1,
+      "divergent_branches": 1,
+      "thread_dependent": 1,
+      "memory_ops": {
+        "total": 1, "shared": 0, "local": 0, "global": 1
+      },
+      "barriers": 0,
+      "divergent_branch_locs": [
+        {"line": 5, "column": 9}
+      ],
+      "memory_access_locs": [
+        {"line": 0, "column": 0}
+      ]
+    },
+    {
+      "function": "kernel_nested_branch",
+      "branch_count": 2,
+      "divergent_branches": 2,
+      "thread_dependent": 2,
+      "memory_ops": {
+        "total": 3, "shared": 0, "local": 0, "global": 3
+      },
+      "barriers": 0,
+      "divergent_branch_locs": [
+        {"line": 11, "column": 9},
+        {"line": 12, "column": 13}
+      ],
+      "memory_access_locs": [
+        {"line": 12, "column": 37},
+        {"line": 13, "column": 24},
+        {"line": 15, "column": 19}
+      ]
+    },
+    {
+      "function": "kernel_shared_flag",
+      "branch_count": 2,
+      "divergent_branches": 1,
+      "thread_dependent": 1,
+      "memory_ops": {
+        "total": 3, "shared": 0, "local": 0, "global": 3
+      },
+      "barriers": 1,
+      "divergent_branch_locs": [
+        {"line": 23, "column": 9}
+      ],
+      "memory_access_locs": [
+        {"line": 23, "column": 24},
+        {"line": 26, "column": 9},
+        {"line": 0, "column": 0}
+      ]
+    }
+]

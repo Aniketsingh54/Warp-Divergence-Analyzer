@@ -94,21 +94,32 @@ std::string emitKernelJson(const std::string &funcName,
  * @param fileKernelMap A map from source file names to vectors of kernel names.
  */
 void emitFileGroups(const std::map<std::string, std::vector<std::string>> &fileKernelMap) {
-  outs() << "[\n";
-  bool firstFile = true;
+  // Create the directory once
+  mkdir("json", 0777);
+
   for (auto &p : fileKernelMap) {
-    if (!firstFile) outs() << ",\n";
-    firstFile = false;
-    outs() << "  {\n";
-    outs() << "    \"source_file\": \"" << p.first << "\",\n";
-    outs() << "    \"kernels\": [\n";
-    for (size_t i = 0; i < p.second.size(); ++i) {
-      outs() << p.second[i];
-      if (i + 1 < p.second.size()) outs() << ",\n";
+    const std::string &sourceFile = p.first;
+    const std::vector<std::string> &kernels = p.second;
+    size_t lastSlash = sourceFile.find_last_of("/\\");
+    std::string baseName = (lastSlash != std::string::npos) ? sourceFile.substr(lastSlash + 1) : sourceFile;
+
+    std::string path = "json/" + baseName + ".json";
+    std::ofstream outFile(path);
+    if (!outFile.is_open()) {
+      llvm::errs() << "Failed to write file: " << path << "\n";
+      continue;
     }
-    outs() << "\n    ]\n  }";
+
+    outFile << "[\n";
+    for (size_t i = 0; i < kernels.size(); ++i) {
+      outFile << kernels[i];
+      if (i + 1 < kernels.size()) outFile << ",\n";
+    }
+    outFile << "\n]\n";
+    outFile.close();
+    outs() << "[*] Emitted file: " << path << "\n";
   }
-  outs() << "\n]\n";
+
 }
 
 } // namespace warp
