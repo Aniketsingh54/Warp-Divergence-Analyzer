@@ -50,23 +50,33 @@ std::string emitKernelJson(const std::string &funcName,
   s << "      },\n";
   s << "      \"barriers\": " << barriers << ",\n";
   s << "      \"divergent_branch_locs\": [\n";
+  bool hasPrinted = false;
   for (size_t i = 0; i < divLocs.size(); ++i) {
     std::string path; int l, c;
     parseLocation(divLocs[i], path, l, c);
+    if(l==0 && c==0) {
+      // Skip invalid locations
+      continue;
+    }
+    if (hasPrinted) s << ",\n";
+    hasPrinted = true;
     s << "        {\"line\": " << l << ", \"column\": " << c << "}";
-    if (i + 1 < divLocs.size()) s << ",";
-    s << "\n";
   }
-  s << "      ],\n";
+  s << "\n      ],\n";
   s << "      \"memory_access_locs\": [\n";
+    hasPrinted = false;
   for (size_t i = 0; i < memLocs.size(); ++i) {
     std::string path; int l, c;
     parseLocation(memLocs[i], path, l, c);
+    if(l==0 && c==0) {
+      // Skip invalid locations
+      continue;
+    }
+    if (hasPrinted) s << ",\n";
+    hasPrinted = true;
     s << "        {\"line\": " << l << ", \"column\": " << c << "}";
-    if (i + 1 < memLocs.size()) s << ",";
-    s << "\n";
   }
-  s << "      ]\n";
+  s << "\n      ]\n";
   s << "    }";
   return s.str();
 }

@@ -12,7 +12,7 @@
         {"line": 5, "column": 9}
       ],
       "memory_access_locs": [
-        {"line": 0, "column": 0}
+
       ]
     },
     {
@@ -48,8 +48,7 @@
       ],
       "memory_access_locs": [
         {"line": 23, "column": 24},
-        {"line": 26, "column": 9},
-        {"line": 0, "column": 0}
+        {"line": 26, "column": 9}
       ]
     }
 ]
