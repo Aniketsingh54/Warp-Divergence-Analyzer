@@ -35,7 +35,7 @@ include_directories(
 link_directories(${LLVM_LIB_DIR})
 
 # Step 4: Build LLVM plugin
-add_library(WarpAnalysis MODULE WarpAnalysis.cpp)
+add_library(WarpAnalysis MODULE src/WarpAnalysis.cpp)
 
 target_compile_options(WarpAnalysis PRIVATE ${LLVM_CXX_FLAGS})
 target_link_libraries(WarpAnalysis PRIVATE ${LLVM_LIBS} ${LLVM_SYS_LIBS})
