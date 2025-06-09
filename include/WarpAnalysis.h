@@ -1,25 +1,20 @@
 #ifndef LLVM_WARP_ANALYSIS_H
 #define LLVM_WARP_ANALYSIS_H
 
+#include "llvm/IR/PassManager.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Function.h"
-#include "llvm/Pass.h"
-
-namespace llvm {
-
-/// \brief A ModulePass that analyzes each function for:
-/// 1) total vs. divergent conditional branches (via PostDominatorTree)
-/// 2) number of memory ops per address space (shared, local, global)
-struct WarpAnalysis : public ModulePass {
-  static char ID;
-  WarpAnalysis();  // Constructor registers the pass ID
-
-  bool runOnModule(Module &M) override;
-
-private:
-  void analyzeFunction(Function &F);
-};
-
-} // namespace llvm
+#include "llvm/Passes/PassPlugin.h"
+#include "llvm/Passes/PassBuilder.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/IR/Dominators.h"
+#include "llvm/Analysis/PostDominators.h"
+#include "llvm/IR/Instructions.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/IR/InstIterator.h"
+#include "llvm/IR/DebugInfoMetadata.h" // For DWARF support
+#include<map>
+#include <vector>
+#include <string>
 
 #endif // LLVM_WARP_ANALYSIS_H
