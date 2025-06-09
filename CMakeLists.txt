@@ -4,7 +4,7 @@ project(WarpAnalysis)
 # Step 1: Locate llvm-config
 find_program(LLVM_CONFIG_EXECUTABLE NAMES llvm-config-19 llvm-config REQUIRED)
 
-# Step 2: Extract proper include path
+# Step 2: Extract LLVM configuration
 execute_process(COMMAND ${LLVM_CONFIG_EXECUTABLE} --includedir
   OUTPUT_VARIABLE LLVM_INCLUDE_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
 
@@ -34,8 +34,13 @@ include_directories(
 
 link_directories(${LLVM_LIB_DIR})
 
-# Step 4: Build LLVM plugin
-add_library(WarpAnalysis MODULE src/WarpAnalysis.cpp)
+# Step 4: Add the WarpAnalysis plugin source files
+add_library(WarpAnalysis MODULE
+  src/Utils.cpp
+  src/AnalysisLogic.cpp
+  src/JsonEmitter.cpp
+  src/WarpAnalysis.cpp
+)
 
 target_compile_options(WarpAnalysis PRIVATE ${LLVM_CXX_FLAGS})
 target_link_libraries(WarpAnalysis PRIVATE ${LLVM_LIBS} ${LLVM_SYS_LIBS})
