@@ -1,42 +1,57 @@
-# Warp Divergence Analyzer — LLVM Pass for GPU Kernel Divergence Detection
+# Warp Insight
 
-**Warp Divergence Analyzer** is a powerful LLVM-based static analysis tool designed to detect and analyze warp divergence in GPU kernels, particularly NVIDIA CUDA programs compiled to LLVM IR. Warp divergence — when threads within a GPU warp follow different control paths — significantly degrades GPU performance by serializing execution. This tool helps developers identify potential divergence points early in the compilation process and provides insights to optimize their GPU code.
+A comprehensive static-analysis framework for CUDA kernels, built on LLVM, that detects warp divergence, stall cycles, and memory‐access patterns — and presents them as structured JSON reports and in-editor annotations.
 
-## Key Features
 
-- **Static Warp Divergence Detection:**  
-  An LLVM IR pass that identifies branch instructions whose conditions cause threads within a warp to diverge, including simple and complex thread ID based conditions.
+## Motivation
 
-- **Control Flow and Data Flow Analysis:**  
-  Tracks divergence through nested branches and loops to understand the overall impact on kernel execution.
+CUDA’s single-instruction multiple-thread (SIMT) model executes groups of 32 threads (“warps”) in lock-step. Any divergence in control flow or long-latency memory access within a warp can cause significant performance penalties.  
 
-- **Quantitative Divergence Metrics (Planned):**  
-  Estimates the degree of divergence and its expected performance penalty.
+**Warp Insight** empowers developers to:
 
-- **Optimization Suggestions (Planned):**  
-  Provides hints and code transformations to reduce warp divergence and improve GPU kernel efficiency.
+- Pinpoint **divergent branches** and **thread-dependent conditions**  
+- Measure **stall cycles** due to memory and synchronization  
+- Classify and map **memory operations** (global, shared, local)  
+- Correlate stalls/divergences back to **source code locations**  
 
-- **Extensible Architecture:**  
-  Designed to support multiple GPU architectures and integrate with LLVM’s evolving GPU toolchain.
+---
 
-- **Easy Integration:**  
-  Compatible with LLVM 19+ and usable as a plugin with `opt` or integrated into custom compiler pipelines.
+## Architecture Overview
 
-## Why Warp Divergence Matters
+1. **LLVM Analysis Pass**  
+   - Parses each CUDA kernel’s LLVM IR  
+   - Records branch instructions, dependencies, memory ops, and barriers  
+   - Captures debug metadata for source‐line mapping  
 
-GPU warps execute instructions in lockstep, but divergence forces serialization, causing some threads to idle while others execute different code paths. Detecting and mitigating divergence early can yield significant performance gains in GPU-accelerated applications such as scientific simulations, machine learning, graphics, and more.
+2. **JSON Emitter**  
+   - Collects per‐kernel statistics and source coordinates  
+   - Emits one `.json` file per source file under `json/`  
 
-## Getting Started
+3. **Dockerized Build & Execution**  
+   - Ensures consistent, reproducible environment  
+   - Users need only Docker and the `warp.sh` wrapper script  
 
-1. Build the pass using CMake with LLVM 19+  
-2. Run on LLVM IR generated from CUDA kernels  
-3. Analyze pass output to identify warp divergence sites
+4. **VS Code Extension**  
+   - Reads the JSON reports  
+   - Highlights divergent branches and memory‐access hotspots  
+   - Supports undo/clear of decorations  
 
-## Future Roadmap
+---
 
-- Advanced divergence quantification and metrics  
-- Automated code transformation suggestions  
-- Integration with GPU performance models  
-- Visualization and reporting tools  
-- Support for AMD and Intel GPU architectures  
+## Quick Start
+
+```bash
+# 1. Build the analysis tool
+./warp.sh --build
+
+# 2. Drop your CUDA files into 'test/'
+cp path/to/your_kernel.cu test/
+
+# 3. Run analysis
+./warp.sh --test
+
+# 4. Install VS Code extension (if not already)
+
+# 5. Open your .cu in VS Code and run the 'Warp Insight: Highlight' command
+```
 
